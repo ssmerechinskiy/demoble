@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="bluetooth_icons">
+        <item>@drawable/bluetooth_1</item>
+        <item>@drawable/bluetooth_2</item>
+        <item>@drawable/bluetooth_3</item>
+        <item>@drawable/bluetooth_4</item>
+        <item>@drawable/bluetooth_5</item>
+        <item>@drawable/bluetooth_6</item>
+        <item>@drawable/bluetooth_7</item>
+    </array>
+</resources>

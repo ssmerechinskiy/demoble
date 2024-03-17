@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">BLE test</string>
+    <string name="device_list_updated">Device list successfully updated</string>
+    <string name="on_network_error">Network error occurred. Try load from cache</string>
+    <string name="on_cache_error">Cache error occurred</string>
+
+    <string name="device_param_product">Product:</string>
+    <string name="device_param_model">Model:</string>
+    <string name="device_param_serial">Serial:</string>
+    <string name="device_param_mac">MAC:</string>
+    <string name="device_param_brake_light">Brake Light:</string>
+    <string name="device_param_light_mode">Light Mode:</string>
+    <string name="device_param_light_auto">Light Auto:</string>
+    <string name="device_param_light_value">Light Value:</string>
+    <string name="device_param_installation_mode">Inst Mode:</string>
+    <string name="device_param_firmware">Firmware</string>
+
+    <string name="device_connection_status">Status:</string>
+</resources>
