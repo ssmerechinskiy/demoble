@@ -5,11 +5,13 @@ import arrow.core.raise.Raise
 import arrow.core.raise.either
 import com.example.bletest.datalayer.db.DBDataSource
 import com.example.bletest.datalayer.db.DbDSError
+import com.example.bletest.datalayer.network.DeviceResponseItem
 import com.example.bletest.datalayer.network.DevicesResponse
 import com.example.bletest.datalayer.network.NetworkDSError
 import com.example.bletest.datalayer.network.NetworkDataSource
 import com.example.bletest.datalayer.repository.DataRepositoryImpl
 import com.example.bletest.datalayer.repository.DeviceModel
+import com.example.bletest.datalayer.repository.toDomain
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -99,5 +101,32 @@ class DataRepositoryTest {
             data.clear()
         }
 
+    }
+
+    @Test
+    fun checkToDomainConverter() {
+        val dto = DeviceResponseItem(
+            macAddress = "address1",
+            model = "model1",
+            product = "product1",
+            firmwareVersion = "firmwareVersion1",
+            serial = "serial1",
+            installationMode = "helmet",
+            brakeLight = "false",
+            lightMode = "OFF",
+            lightAuto = "false",
+            lightValue = 0
+        )
+        val domain = dto.toDomain()
+        assertEquals(dto.macAddress, domain.macAddress)
+        assertEquals(dto.model, domain.model)
+        assertEquals(dto.product, domain.product)
+        assertEquals(dto.firmwareVersion, domain.firmwareVersion)
+        assertEquals(dto.serial, domain.serial)
+        assert(dto.installationMode.equals(domain.installationMode.descr))
+        assert(dto.brakeLight.equals(domain.brakeLight.descr))
+        assert(dto.lightMode.equals(domain.lightMode.descr))
+        assert(dto.lightAuto.equals(domain.lightAuto.descr))
+        assertEquals(dto.lightValue, domain.lightValue)
     }
 }
