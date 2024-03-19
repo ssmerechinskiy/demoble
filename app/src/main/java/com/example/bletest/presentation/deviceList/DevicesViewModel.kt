@@ -27,7 +27,6 @@ sealed class NotifType {
 
 @HiltViewModel
 class DevicesViewModel @Inject constructor(
-    @ApplicationContext private val applicationContext: Context,
     private val savedStateHandle: SavedStateHandle,
     private val dataRepository: DataRepository
 ): ViewModel() {

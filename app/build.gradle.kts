@@ -128,6 +128,9 @@ dependencies {
     val mockitoKotlinVersion = "3.0.0"
     testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
 
+    val mockkVersion = "1.13.10"
+    testImplementation("io.mockk:mockk:$mockkVersion")
+
     val coroutines_version = "1.8.1-Beta"
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version")
 
@@ -135,6 +138,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    testImplementation("app.cash.turbine:turbine:1.1.0")
 }
 
 kapt {

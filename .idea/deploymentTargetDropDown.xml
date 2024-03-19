@@ -5,15 +5,6 @@
       <entry key="app">
         <State />
       </entry>
-      <entry key="checkButton()">
-        <State />
-      </entry>
-      <entry key="checkDevicesList()">
-        <State />
-      </entry>
-      <entry key="checkFloatingActionButton()">
-        <State />
-      </entry>
     </value>
   </component>
 </project>
