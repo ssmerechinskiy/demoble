@@ -27,6 +27,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,30 +47,11 @@ import com.example.bletest.presentation.LocalBluetoothIconIDs
 import com.example.bletest.presentation.MyListItem
 import kotlinx.coroutines.delay
 
-@Composable
-fun ScanAction(onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .padding(48.dp)
-            .fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.End,
-    ) {
-        FloatingActionButton(
-            modifier = Modifier.semantics {
-                contentDescription = contentDescriptionScanBleDevices
-            },
-            onClick = { onClick() },
-        ) {
-            Icon(Icons.Filled.Search, "")
-        }
-    }
 
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DevicesScreen(
+fun DevicesScreen2(
     viewModel: DevicesViewModel,
     onItemClick : (UIDeviceModel) -> Unit,
     onScanButtonClick : ()-> Unit
@@ -110,6 +92,99 @@ fun DevicesScreen(
     }
 }
 
+@Composable
+fun DevicesScreen(
+    viewModel: DevicesViewModel,
+    onItemClick : (UIDeviceModel) -> Unit,
+    onScanButtonClick : ()-> Unit
+) {
+    viewModel.setImageCount(LocalBluetoothIconIDs.current.size)
+
+    val uiState by viewModel.devicesState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadDevices()
+    }
+
+    DevicesStateContainer(
+        uiState = uiState,
+        onPullToRefresh = { viewModel.loadDevices() },
+        onItemClick = onItemClick
+    )
+
+    ScanAction {
+        onScanButtonClick()
+    }
+}
+
+@Composable
+fun DevicesStateContainer(
+    uiState : DevicesViewModel.UIState,
+    onPullToRefresh : () -> Unit,
+    onItemClick : (UIDeviceModel) -> Unit
+) {
+    when(uiState) {
+        is DevicesViewModel.UIState.DevicesState ->
+            DevicesView(
+                uiState = uiState,
+                onPullToRefresh = onPullToRefresh,
+                onItemClick = onItemClick
+            )
+        is DevicesViewModel.UIState.Error -> {
+            ErrorView()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun DevicesView(
+    uiState : DevicesViewModel.UIState.DevicesState,
+    onPullToRefresh : () -> Unit,
+    onItemClick : (UIDeviceModel) -> Unit
+) {
+    val inProgress by remember { derivedStateOf {
+        (uiState is DevicesViewModel.UIState.DevicesState) && ((uiState as DevicesViewModel.UIState.DevicesState).inProgress)
+    } }
+
+    val pullToRefreshState = rememberPullRefreshState(
+        refreshing = inProgress,
+        onRefresh = { onPullToRefresh() }
+    )
+
+    if(uiState.devices.isNotEmpty()) {
+        Box(Modifier.pullRefresh(pullToRefreshState)) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics {
+                        contentDescription = contentDescriptionDeviceList
+                    }
+            ) {
+                items(uiState.devices, key = { device -> device.deviceModel.macAddress }) {device ->
+                    MyListItem(
+                        title = device.deviceModel.model,
+                        subTitle = device.deviceModel.product,
+                        imageId = LocalBluetoothIconIDs.current[device.imageIndex]
+                    ) { onItemClick(device) }
+                }
+            }
+            PullRefreshIndicator(inProgress, pullToRefreshState, Modifier.align(Alignment.TopCenter))
+        }
+    } else {
+        EmptyListAnimation()
+    }
+
+    uiState.notifType?.let {
+        when(it) {
+            is NotifType.ToastMessage -> {
+                Toast.makeText(LocalContext.current, it.message, Toast.LENGTH_SHORT).show()
+            }
+            is NotifType.View -> {}
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DevicesList(
@@ -136,7 +211,7 @@ fun DevicesList(
                 modifier = Modifier
                     .fillMaxSize()
                     .semantics {
-                        contentDescription = contentDescriptionScanBleDevices
+                        contentDescription = contentDescriptionDeviceList
                     }
             ) {
                 items(devices, key = { device -> device.deviceModel.macAddress }) {device ->
@@ -181,6 +256,27 @@ fun EmptyListAnimation() {
         }
     }
 }
+
+@Composable
+fun ScanAction(onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(48.dp)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.End,
+    ) {
+        FloatingActionButton(
+            modifier = Modifier.semantics {
+                contentDescription = contentDescriptionScanBleDevices
+            },
+            onClick = { onClick() },
+        ) {
+            Icon(Icons.Filled.Search, "")
+        }
+    }
+}
+
 
 const val contentDescriptionScanBleDevices = "search ble devices"
 const val contentDescriptionDeviceList = "models list"

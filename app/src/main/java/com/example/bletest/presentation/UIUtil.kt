@@ -85,6 +85,7 @@ fun ErrorView(
             .padding(LocalSizes.current.paddingSmall)
             .fillMaxWidth()
             .wrapContentSize(Alignment.Center)
+            .semantics { contentDescription = contentDescriptionErrorView }
     ) {
         Image(
             painterResource(id = R.drawable.error_icon),
@@ -104,3 +105,5 @@ fun ErrorView(
         }
     }
 }
+
+const val contentDescriptionErrorView = "error view"
